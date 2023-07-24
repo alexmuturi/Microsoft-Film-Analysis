@@ -1,72 +1,120 @@
-# Phase 1 Project Template - Minimum Viable Product (MVP)
+# Microsoft Film Analysis
 
-![blueprint](images/blueprint.png)
+**Author**: Alex Muturi
 
-This repository is like a blueprint, providing structure for your first End of Phase Project. We suggest you base your Phase 1 project off of this repository so you can focus less on formatting and organization, and more on the _analysis and communication skills_ that will support your progress through the course. This template is designed to make your project portfolio-ready in order to impress the future employers who will review it. 
+![Action](images/action.gif "segment") 
 
-## Repository Contents
 
-Below is a list of the contents of this repository - instructions for using them are in the next section.
 
-- `README.md`: The README for this repo branch explaining it's contents - you're reading it now
-- `TEMPLATE_README.md`: An example of a project README that provides a brief overview of your whole project
-- `dsc-phase1-project-template.ipynb`: A starter Jupyter Notebook with headings, code examples and guiding questions
-- `DS_Project_Presentation_Template.pdf`: A starter slide deck presenting your project - here is an [editable version](https://docs.google.com/presentation/d/1PaiH1bleXnhiPjTPsAXQSiAK0nkaRlseQIr_Yb-0mz0/copy)
-- `zippedData` folder: A folder for the data you reference with your code
-- `images` folder: A folder for the images you reference in your files 
-- `.gitignore`: A hidden file that tells git to not track certain files and folders
+## Overview
+Microsoft is looking to enter the film industry. This analysis is conducted to help the company choose an informed entry position. It analyses datasets containing film information to generate insights and recommendations. 
 
-## Instructions For Using This Repository
+Data-backed answers to the proposed business questions suggest that Microsoft invests generously in Adventure, Action, Comedy and Drama genres.
 
-### Fork This Repository
 
-**For a group project**, have only one team member do these steps:
 
-1. Fork this repository to your personal account
-   - In GitHub, go to this repository and click the "Fork" button in the upper right
-   
-2. Change the name of your fork of this repo to a _descriptive_ name of your choosing
-   - In GitHub, go to your fork of this repo -> "Settings" -> "Options" -> "Repository Name" -> "Rename"
-   - Make the name descriptive, since potential employers will read it. Ex: "Microsoft-Movie-Analysis" is better than "Project-1"
+## Business Problem
+As a business, the main intention to join the film industry is the industry's potential for profit. Therefore, the business problem is to consider all available factors and make a decision that optimizes returns. 
 
-3. Use `git clone` to clone your fork of this repo to your local computer
+This analysis proposes 3 business questions to help with the goal:
+1. What are the most Popular Genres? 
+2. Which Genres have the highest monetary returns?
+3. Does a higher production budget translate to higher returns?
 
-4. **For a group project**, add team members as collaborators to your fork of this repo
-   - In GitHub, go to your fork of this repo -> "Settings" -> "Manage Access" -> "Invite Teams or People"
-   - Add your project team members as collaborators & send them the repo GitHub URL
+The selection of these questions is based on the type of data available and the intention mentioned above. 
 
-### Work In Your Fork Of This Repository
 
-- Work in the repo clone that you created on your local machine
-- Start writing and coding in the Jupyter Notebook `dsc-phase1-project-template.ipynb`
-- Fill in the README template in `TEMPLATE_README.md`
-- Use `git add`, `git commit`, and `git push` often to update your repo in GitHub
-   - For a refresher on how to do this and why it's important, review Topic 2: Bash and Git
+## Exploratory Data Analysis
+The data used in the analysis was sourced from [IMDB Developer](https://developer.imdb.com/non-commercial-datasets/) non commercial datasets collection. I used the following datasets:
 
-### Use The Slide Template
+ ```
+title.basics.csv
+title.ratings.csv
+bom.movie_gross.csv
+tn.movie_budgets.csv
+```
+They can all be accessed from the /data folder.
 
-1. Go to [this link](https://docs.google.com/presentation/d/1PaiH1bleXnhiPjTPsAXQSiAK0nkaRlseQIr_Yb-0mz0/copy) to make an editable copy of the slide deck in your own Google Drive account
-2. Go to "Slide," select "Change Theme," and pick a theme you like so your presentation doesn't look like everyone else's
-3. **For a group project**, click the "Share" button and add your teammates as editors
 
-### Tidy Up Your Project
+After loading into dataframes, The first section in the goes through the dataframes to inspect their shapes, column names, what each row represents and viewing sample rows from the head or tail of each. It ends with combining the `basics_df` and `ratings.df` into `combined_df` as the infomation they contain is highly related for the purposes of our analysis.
 
-- Change the file name of the Jupyter Notebook (`dsc-phase1-project-template.ipynb`) to something more descriptive
-- Save an appropriately-named PDF version of your slide deck to the repository
-- Rename the template readme you've been working in by running `git mv TEMPLATE_README.md README.md`
-- Delete unnecessary files from the repo using `git rm`
-   - The presentation PDF: `DS_Project_Presentation_Template.pdf`
-   - Any unused data files in the `zippedData` folder
-   - Any unused images in the `images` folder
-- Utilize the .gitignore file to ignore large unzipped data files in the `zippedData` folder
-   - Add `*.csv`,`*.tsv`, and `*.db` to the .gitignore file
+## Methods
 
-### Submit Your Project
+### Data Preparation
+This section presents the process of cleaning the data, alongside the reasoning for decisions in each step.
 
-To submit your project, please follow the instructions in the "Project Submission & Review" page in the Milestones course.
 
-***
-### Notes
+I find no duplicate rows and continue to create a function `null_percentages(data_frame)` that prints out the number of null values in a dataframe and their percentage as in the below image:
+![example](images/null_percentages.png)
 
-- The visualizations in the notebook use best practices for visualization that you should try to emulate. For example, they have clear axes, descriptive titles, and appropriate number formatting
-- The `dsc-phase1-project-template.ipynb` is intended to be the _final version_ of your project. The first notebook you create will not look like this. You are encouraged to start with a very disorderly notebook and clean it as you go
+To understand the distribution of data in the dataframe, I print out its measures of central tendency and dispersion using `describe()`. I also plot the histogram below and find the runtime_minutes column to be heavily skewed.
+
+I chose to fill in the missing values with the median because it was least likely to be affected by outliers. Dropping the rows was not an option as I would lose over 10% of the data.
+
+The boxplot below suggested presence of extreme outliers:
+
+![example](images/outliers_present.jpeg)
+
+The original distribution had a skewness value of +241 which I normalized using trimming and replacing with median values to yield the below:
+
+![example](images/outliers_absent.jpeg)
+
+
+### Question 1: What are the most Popular Genres? 
+From the business understanding, Microsoft would need to know which genres are doing best.\
+*Assumption - the viewership of a movie is directly related to its weighted rating, as more reviewed genres are more likely to have been viewed and reviewed more.*
+
+To answer this question, I needed to consider **weighted ratings** based on the average ratings and number of votes. I had chosen to use the Wilson score to determine the confidence level that a rating had based on the number but couldn't figure out how to make it work on time so I pivoted.
+
+Instead, I found the top 5 genres by average rating and the top 5 by the number of votes (*see assumption above*), added both to a list and chose the top genres by how frequently they appeared in that list. I believe the logic holds.
+
+## Question 2:Which Genres have the highest monetary returns?
+As a business, Microsoft should also consider the performance in revenue of the genres.
+
+By knowing the genres that perform best, the company would be hoping to replicate the success by joining the bandwagon.
+
+To answer this question, I merged `movie_gross_df` and `basic_df` on columns 'title' and 'primary_title' respectively. After dropping unneeded columns, handling duplicates and dropping null values, I found the top 5 genres by gross by domestic gross and added the genres to a list.
+
+Again, I used how often a genre appears in the list to judge the performance of the genres. 
+
+### Question 3: Does a higher production budget translate to higher returns?
+
+To gain a sense of how much to spend on the chosen Genre given their expected returns, Microsoft may want to understand the relationship between two.
+
+I used `roi_df`that contained budgets and gross returns per film among other details  to answer this question. After basic preparation, a few type conversions and currency formatting, I shrunk the DataFrame to contain only the columns `production_budget` and `worldwide_gross`. Finally I plotted a beautiful pairplot to represent my asnwer to the question. 
+
+## Results
+**Q1: What are the most popular genres?**\
+Comedy, Drama, Adventure and Action were the most popular genres in that order.
+
+![Chart](images/question_1.jpg)
+
+**Question 2:Which genres have the highest monetary returns?**\
+From the analysis, Microsoft should consider creating films in Adventure, Action, Comedy and Drama.
+
+![Chart2](images/question_2.jpg)
+
+**Question 3: Does a higher production budget translate to higher returns?**
+
+There is a moderate to strong positive correalation `(+0.74)` between a film's production budget and its returns. A positve return on investment is just what an investor would be looking for.
+
+![Chart3](images/question_3.png)
+
+
+## Conclusion
+
+This project was completed successfully and answers to questions provided. My recommendations to the stakeholder are to invest in the genres identified above and consider allocating a healthy budget for the project for reasons this project has provided. 
+
+I would recommend thet they take other factors beyond the scope of this project into consideration such as external and internal business environments.
+
+## Repository Structure
+
+
+
+```
+├── README.md                           <- The top-level README for reviewers of this project
+├── dsc-phase1-project-template.ipynb   <- Narrative documentation of analysis in Jupyter notebook
+├── DS_Project_Presentation.pdf         <- PDF version of project presentation
+├── data                                <- Both sourced externally and generated from code
+└── images                              <- Both sourced externally and generated from code
+```
