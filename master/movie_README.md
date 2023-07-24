@@ -1,19 +1,52 @@
 # Microsoft Movie Analysis
 
-**Author**: Karen Ballard
+**Author**: Alex Muturi
+![A]("images/200w.gif") 
+ 
 
 ## Overview
+Microsoft is looking to enter the film industry, and this analysis is conducted to help the company choose an informed entry position. It analyses datasets with film information to generate insights and recommendations. 
 
-Microsoft have decided to create a new movie studio and require more insight into which types of films are doing best at the box office. This project uses descriptive statistical analysis on data gathered from IMDb website to gain insight into which combination of genres topped the league in these areas. Three seperate datasets were used for this analysis to gain insight into which combination genres of movies topped the domestic gross sales, foreign gross sales, had the top average ratings and number of votes. The results of the top 20 combination genres in Domestic Sales, Foreign Sales and number of votes was clearly the combination Action, Adventure & Sci-Fi, with adventure being present in the majority of the top 20 of the 3 categories. My recommendation for which type of Movie to produce would be Action, Adventure & Sci-Fi as this is the most predominant combination in the analysis, there were 260 unique genre combinations in this data set after cleaning. I would also highly recommend that Adventure and Action paired with either Animation or Fantasy is a successful combination. In Domestic and Foreign Sales the combination Adventure, Animation & Comedy also faired well which would be my third recommendation. Adventure was clearly a strong genre for popular successful movies.
+Data-backed answers to the proposed business questions suggest that Microsoft invests generously in Adventure, Action, Comedy and Drama genres.
+
+
 
 ## Business Problem
+As a business, the main intention to join the film industry is the industry's potential for profit. Therefore, the business problem is to consider all available factors and make a decision that optimizes returns. 
 
-Microsoft want to produce movies that are going to be successful in order to make profits, they want to know which types of movies are the most successful. To answer that question both Domestic and Foreign Sales data was analysed to see the most financially successful genres, along with the average rating given and number of votes for each type or genre of movie to see how popularity compared with financial success.
+This analysis proposes 3 business questions to help with the goal:
+1. What are the most Popular Genres? 
+2. Which Genres have the highest monetary returns?
+3. Does a higher production budget translate to higher returns?
+
+The selection of these questions is based on the type of data available and the intention mentioned above. 
 
 
-***
+## Exploratory Data Analysis
+The data used in the analysis was sourced from [IMDB Developer](https://developer.imdb.com/non-commercial-datasets/) non commercial datasets collection. I used the following datasets:
 
-## Data
+ 
+>title.basics.csv\
+>title.ratings.csv\
+>bom.movie_gross.csv\
+>tn.movie_budgets.csv
+
+They can all be accessed from the /data folder.
+
+
+After loading into dataframes, The first section in the goes through the dataframes to inspect their shapes, column names, what each row represents and viewing sample rows from the head or tail of each. It ends with combining the `basics_df` and `ratings.df` into `combined_df` as the infomation they contain is highly related for the purposes of our analysis.
+
+## Methods
+
+### Data Preparation
+This section presents the process of cleaning the data, alongside the reasoning for decisions in each step.
+
+I use `.sample(5)` to view sample records and `info()` to view info about the columns' data types and number of values 
+
+I find no duplicate rows and continue to create a function `null_percentages(data_frame)` that prints out the number of null values and the percentage as in the below image:
+
+
+
 
 The data analysed came from IMDb website. IMDb (an acronym for Internet Movie Database) is a popular worldwide online database of infomation relating to all movies, television programs, video games and streaming content online. I used 3 files from IMDb to answer the question of which genres were most successful, mainly focusing on the Domestic and Foreign Gross sales along with average ratings given and number of votes received.
 
